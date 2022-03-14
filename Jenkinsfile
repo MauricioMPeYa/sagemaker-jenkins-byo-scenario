@@ -22,7 +22,6 @@ pipeline {
  	              docker build -t scikit-byo:${env.BUILD_ID} .
                 docker tag scikit-byo:${env.BUILD_ID} ${params.ECRURI}:${env.BUILD_ID} 
                 docker push ${params.ECRURI}:${env.BUILD_ID}
-                echo ${params.S3_PACKAGED_LAMBDA}
               """
             }
         }
