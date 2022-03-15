@@ -42,5 +42,7 @@ WORKDIR /opt/program
 
 RUN pwd
 RUN ls -la
+RUN chmod 755 serve
+RUN ls -la
 
 
