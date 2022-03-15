@@ -38,5 +38,9 @@ ENV PATH="/opt/program:${PATH}"
 COPY decision_trees /opt/program
 WORKDIR /opt/program
 
+######################
+
+RUN pwd
+RUN ls -la
 
 
