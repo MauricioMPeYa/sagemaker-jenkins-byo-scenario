@@ -71,21 +71,24 @@ def transformation():
     elif flask.request.content_type == 'application/json':
         data_raw = flask.request.data.decode('utf-8')
         data_dict = json.loads(data_raw)
-        data = pd.DataFrame(data=[data_dict['data']])
+        data = pd.DataFrame(data=data_dict['data'])
     else:
-        return flask.Response(response='This predictor only supports CSV data', status=415, mimetype='text/plain')
+        return flask.Response(response='This predictor only supports CSV and JSON data', status=415, mimetype='text/plain')
 
     print('Invoked with {} records'.format(data.shape[0]))
 
     # Do the prediction
     predictions = ScoringService.predict(data)
 
-    # Convert from numpy back to CSV
-    out = StringIO()
-    pd.DataFrame({'results':predictions}).to_csv(out, header=False, index=False)
-    result = out.getvalue()
+    dict_predictions = dict(predictions=predictions.tolist())
 
-    return flask.Response(response=result, status=200, mimetype='text/csv')
+    # Convert from numpy back to CSV
+    #out = StringIO()
+    #pd.DataFrame({'results':predictions}).to_csv(out, header=False, index=False)
+    #result = out.getvalue()
+
+    return flask.Response(response=json.dumps(dict_predictions), status=200, mimetype='application/json')
+    #return flask.Response(response=result, status=200, mimetype='text/csv')
 
 
 if __name__ == '__main__':
