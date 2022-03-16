@@ -66,8 +66,12 @@ def transformation():
     # Convert from CSV to pandas
     if flask.request.content_type == 'text/csv':
         data = flask.request.data.decode('utf-8')
-        s = StringIO.StringIO(data)
+        s = StringIO(data)
         data = pd.read_csv(s, header=None)
+    elif flask.request.content_type == 'application/json':
+        data_raw = flask.request.data.decode('utf-8')
+        data_dict = json.loads(data_raw)
+        data = pd.DataFrame(data=[data_dict['data']])
     else:
         return flask.Response(response='This predictor only supports CSV data', status=415, mimetype='text/plain')
 
@@ -77,8 +81,12 @@ def transformation():
     predictions = ScoringService.predict(data)
 
     # Convert from numpy back to CSV
-    out = StringIO.StringIO()
+    out = StringIO()
     pd.DataFrame({'results':predictions}).to_csv(out, header=False, index=False)
     result = out.getvalue()
 
     return flask.Response(response=result, status=200, mimetype='text/csv')
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5200)
